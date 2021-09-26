@@ -5,6 +5,7 @@ const getCollection = (myCollection) => {
     const documents = ref(null); //for documents from database
     const error = ref(null);
 
+    //register the firestore collection reference
     let collectionRef = projectFirestore.collection(myCollection).orderBy('createdAt')
 
     const unsubscribe = collectionRef.onSnapshot(snap => {
@@ -12,10 +13,11 @@ const getCollection = (myCollection) => {
         let results = [];
 
         snap.docs.forEach(doc => {
+            //check for valid createdAt property and then push document data and id
             doc.data().createdAt && results.push({ ...doc.data(), id: doc.id })
         })
         documents.value = results;
-        error.value = null; //reset error if any
+        error.value = null; //reset error if any data
     }, (err) => {
         console.log(err.message);
         documents.value = null;
@@ -24,7 +26,7 @@ const getCollection = (myCollection) => {
 
     watchEffect((onInvalidate) => {
         // unsubscribe from previous collection when watcher is stopped (component unmounted)
-        onInvalidate(() => unsubscribe());
+        onInvalidate(() => unsubscribe()); //only fires when the component uses this gets unmounted
     })
 
     return { documents, error }
