@@ -15,7 +15,7 @@ const useStorage = () => {
 
         try {
             const response = await storageRef.put(file); //uploads data to path
-            url.value = response.ref.getDownloadURL(); //get firebase url
+            url.value = await response.ref.getDownloadURL(); //get firebase url
         }catch(err){
             console.log(err.message);
             error.value = err.message;

@@ -7,13 +7,17 @@
       <input type="file" @change="handleChange" accept=".png, .jpg">
       <div class="error">{{fileError}}</div>
       <div class="error"></div>
-      <button>Create</button>
+      <button v-if="!isPending">Create</button>
+      <button v-else disabled>Creating...</button>
   </form>
 </template>
 
 <script>
 import { ref } from 'vue';
 import useStorage from '@/composables/useStorage.js';
+import useCollection from '@/composables/useCollection.js';
+import getUser from '@/composables/getUser.js';
+import { timestamp } from '@/firebase/config.js';
 
 export default {
     setup() {
@@ -22,13 +26,33 @@ export default {
         const file = ref(null);
         const fileError = ref(null);
 
+        const { error, addDocument } = useCollection('playlists');
         const { filePath, url, uploadImage } = useStorage();
+        const { user } = getUser();
+
+        const isPending = ref(false); //local timer
 
         const handleSubmit = async () => {
             if(file.value){
+                isPending = true;
                 //if image file is selected, then allow to submit
                 await uploadImage(file.value); // pass the file to useStorage.js
-                console.log('image uploaded, url: ', url.value); //comes from useStorage.js
+                await addDocument({
+                    title: title.value,
+                    description: description.value,
+                    userId: user.value.uid, //unique id
+                    userName: user.value.displayName,
+                    coverUrl: url.value, //firebase url of the file
+                    filePath: filePath.value, //covers/uid/filename
+                    songs: [], //will be empty when they create playlist
+                    createdAt: timestamp() //when this document was created
+                })
+                isPending = false; //when everything is done
+                if(!error.value){
+                    console.log('playlist added');
+                }
+                
+                //console.log('image uploaded, url: ', url.value); //comes from useStorage.js
                 //console.log('image uploaded, url: ' + url.value); //this does not work
             }
         }
@@ -55,7 +79,7 @@ export default {
         
 
         
-        return { title, description, handleSubmit, handleChange, fileError }
+        return { title, description, handleSubmit, handleChange, fileError, isPending }
     }
 
 }
