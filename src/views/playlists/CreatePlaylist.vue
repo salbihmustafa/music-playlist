@@ -6,7 +6,6 @@
       <label>Upload Playlist Cover Image</label>
       <input type="file" @change="handleChange" accept=".png, .jpg">
       <div class="error">{{fileError}}</div>
-      <div class="error"></div>
       <button v-if="!isPending">Create</button>
       <button v-else disabled>Creating...</button>
   </form>
@@ -21,20 +20,20 @@ import { timestamp } from '@/firebase/config.js';
 
 export default {
     setup() {
-        const title = ref('');
-        const description = ref('');
-        const file = ref(null);
-        const fileError = ref(null);
-
         const { error, addDocument } = useCollection('playlists');
         const { filePath, url, uploadImage } = useStorage();
         const { user } = getUser();
 
+        const title = ref('');
+        const description = ref('');
+        const file = ref(null);
+        const fileError = ref(null);
         const isPending = ref(false); //local timer
 
         const handleSubmit = async () => {
             if(file.value){
-                isPending = true;
+                debugger;
+                isPending.value = true;
                 //if image file is selected, then allow to submit
                 await uploadImage(file.value); // pass the file to useStorage.js
                 await addDocument({
@@ -47,7 +46,7 @@ export default {
                     songs: [], //will be empty when they create playlist
                     createdAt: timestamp() //when this document was created
                 })
-                isPending = false; //when everything is done
+                isPending.value = false; //when everything is done
                 if(!error.value){
                     console.log('playlist added');
                 }
@@ -75,9 +74,6 @@ export default {
             }
             
         }
-
-        
-
         
         return { title, description, handleSubmit, handleChange, fileError, isPending }
     }
