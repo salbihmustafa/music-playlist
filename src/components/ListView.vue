@@ -1,18 +1,20 @@
 <template>
   <!-- anytime you get collection there will be an id attached, see getCollection -->
   <div v-for="playlist in playlists" :key="playlist.id">
-    <div class="single">
+    <router-link :to="{ name: 'PlaylistDetails', params: {id: playlist.id}}">
+      <div class="single">
         <div class="thumbnail">
-            <img :src="playlist.coverUrl">
+          <img :src="playlist.coverUrl" />
         </div>
         <div class="info">
-            <h3>{{ playlist.title }}</h3>
-            <p>Created by {{ playlist.userName }}</p>
+          <h3>{{ playlist.title }}</h3>
+          <p>Created by {{ playlist.userName }}</p>
         </div>
         <div class="song-number">
-            <p>{{ playlist.songs.length }}</p>
+          <p>{{ playlist.songs.length }}</p>
         </div>
-    </div>
+      </div>
+    </router-link>
   </div>
 </template>
 
@@ -24,34 +26,35 @@ export default {
 
 <style scoped>
 .single {
-    display: flex;
-    align-items: center;
-    padding: 20px;
-    border-radius: 10px;
-    background: white;
-    margin: 16px 0;
-    transition: all ease 0.2s; /* animation is smooth */
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  border-radius: 10px;
+  background: white;
+  margin: 16px 0;
+  transition: all ease 0.2s; /* animation is smooth */
+  cursor: pointer;
 }
 .single:hover {
-    box-shadow: 1px 2px 3px rgba(50,50,50,0.05);
-    transform: scale(1.02); /* makes it pop up */
-    transition: all ease 0.2s;
+  box-shadow: 1px 2px 3px rgba(50, 50, 50, 0.05);
+  transform: scale(1.02); /* makes it pop up */
+  transition: all ease 0.2s;
 }
 .thumbnail {
-    max-width: 100px;
-    max-height: 100px;
-    overflow: hidden;
-    border-radius: 10px;
+  max-width: 100px;
+  max-height: 100px;
+  overflow: hidden;
+  border-radius: 10px;
 }
 img {
-    max-width: 150%;
-    max-height: 150%;
-    display: block;
+  max-width: 150%;
+  max-height: 150%;
+  display: block;
 }
 .info {
-    margin: 0 30px; /*pushes a bit of margin from pictures*/
+  margin: 0 30px; /*pushes a bit of margin from pictures*/
 }
 .song-number {
-    margin-left: auto; /*push to the left*/
+  margin-left: auto; /*push to the left*/
 }
 </style>
