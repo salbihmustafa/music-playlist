@@ -12,8 +12,9 @@ const useCollection = (myCollection) => {
 
         try {
             // add document to collections in firestore
-            await projectFirestore.collection(myCollection).add(doc);
+            const response = await projectFirestore.collection(myCollection).add(doc);
             isPending.value = false;
+            return response; // to retrieve id if needed, where ever you're calling this make sure to attach to variable
         } catch (err) {
             console.log(err.message);
             isPending.value = false;
