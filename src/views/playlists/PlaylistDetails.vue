@@ -9,6 +9,7 @@
       <h2>{{playlist.title}}</h2>
       <p class="username">Created by {{ playlist.userName }}</p>
       <p class="description">{{ playlist.description }}</p>
+      <button v-if="ownership" @click="handleDelete">Delete Playlist</button>
     </div>
     <!-- song list -->
     <div class="song-list">
@@ -18,14 +19,34 @@
 </template>
 
 <script>
+import useStorage from '@/composables/useStorage';
+import useDocument from '@/composables/useDocument';
 import getDocument from '@/composables/getDocument';
+import getUser from '@/composables/getUser';
+import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
     props: ['id'],
     setup(props){
+      const { user } = getUser();
       const { document: playlist, error } = getDocument('playlists', props.id);
+      const { deleteDoc } = useDocument('playlists', props.id);
+      const { deleteImage } = useStorage();
+      const router = useRouter();
 
-      return { playlist, error }
+      const ownership = computed(() => {
+        //all three have to be true in order to return true
+        return playlist.value && user.value && user.value.uid == playlist.value.userId;
+      });
+
+      const handleDelete = async () => {
+        await deleteImage(playlist.value.filePath);
+        await deleteDoc();
+        router.push({ name: 'Home' }); //redirect to home page
+      }
+
+      return { playlist, error, ownership, handleDelete }
     }
 }
 </script>
