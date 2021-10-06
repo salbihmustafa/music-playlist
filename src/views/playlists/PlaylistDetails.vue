@@ -19,10 +19,12 @@
 </template>
 
 <script>
+import useStorage from '@/composables/useStorage';
 import useDocument from '@/composables/useDocument';
 import getDocument from '@/composables/getDocument';
 import getUser from '@/composables/getUser';
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default {
     props: ['id'],
@@ -30,6 +32,8 @@ export default {
       const { user } = getUser();
       const { document: playlist, error } = getDocument('playlists', props.id);
       const { deleteDoc } = useDocument('playlists', props.id);
+      const { deleteImage } = useStorage();
+      const router = useRouter();
 
       const ownership = computed(() => {
         //all three have to be true in order to return true
@@ -37,7 +41,9 @@ export default {
       });
 
       const handleDelete = async () => {
+        await deleteImage(playlist.value.filePath);
         await deleteDoc();
+        router.push({ name: 'Home' }); //redirect to home page
       }
 
       return { playlist, error, ownership, handleDelete }
