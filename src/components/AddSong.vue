@@ -12,12 +12,16 @@
 
 <script>
 import { ref } from 'vue';
+import useDocument from '@/composables/useDocument.js';
 
 export default {
-    setup() {
+    props: ['playlist'],
+    setup(props) {
         const title = ref('');
         const artist = ref('');
         const showForm = ref(false);
+
+        const { error, isPending, updateDoc } = useDocument('playlists', props.playlist.id);
 
         const handleSubmit = async () => {
             const newSong = {
@@ -26,7 +30,11 @@ export default {
                 id: Date.now() //random milisecond number
             }
 
-            console.log(newSong);
+            await updateDoc({
+                songs: [...props.playlist.songs, newSong]
+            });
+            title.value = ''; //reset
+            artist.value = ''; //reset
         }
 
         return { title, artist, showForm, handleSubmit }
