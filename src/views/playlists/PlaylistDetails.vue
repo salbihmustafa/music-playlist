@@ -4,58 +4,62 @@
     <!-- playlist information -->
     <div class="playlist-info">
       <div class="cover">
-        <img :src="playlist.coverUrl">
+        <img :src="playlist.coverUrl" />
       </div>
-      <h2>{{playlist.title}}</h2>
+      <h2>{{ playlist.title }}</h2>
       <p class="username">Created by {{ playlist.userName }}</p>
       <p class="description">{{ playlist.description }}</p>
       <button v-if="ownership" @click="handleDelete">Delete Playlist</button>
     </div>
     <!-- song list -->
     <div class="song-list">
-      <p>Song list here</p>
+      <div v-if="!playlist.songs.length">No songs have been added to this playlist yet.</div>
+      <SongList v-if="playlist.songs.length" :ownership="ownership" :playlist="playlist"/>
       <AddSong v-if="ownership" :playlist="playlist" />
     </div>
   </div>
 </template>
 
 <script>
-import AddSong from '@/components/AddSong.vue';
-import useStorage from '@/composables/useStorage';
-import useDocument from '@/composables/useDocument';
-import getDocument from '@/composables/getDocument';
-import getUser from '@/composables/getUser';
-import { computed, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import SongList from "@/components/SongList.vue";
+import AddSong from "@/components/AddSong.vue";
+import useStorage from "@/composables/useStorage";
+import useDocument from "@/composables/useDocument";
+import getDocument from "@/composables/getDocument";
+import getUser from "@/composables/getUser";
+import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
-    props: ['id'],
-    components: { AddSong },
-    setup(props){
-      const { user } = getUser();
-      const { document: playlist, error } = getDocument('playlists', props.id);
-      const { deleteDoc } = useDocument('playlists', props.id);
-      const { deleteImage } = useStorage();
-      const router = useRouter();
+  props: ["id"],
+  components: { AddSong, SongList },
+  setup(props) {
+    const { user } = getUser();
+    const { document: playlist, error } = getDocument("playlists", props.id);
+    const { deleteDoc } = useDocument("playlists", props.id);
+    const { deleteImage } = useStorage();
+    const router = useRouter();
 
-      const ownership = computed(() => {
-        //all three have to be true in order to return true
-        return playlist.value && user.value && user.value.uid == playlist.value.userId;
-      });
+    const ownership = computed(() => {
+      //all three have to be true in order to return true
+      return (
+        playlist.value && user.value && user.value.uid == playlist.value.userId
+      );
+    });
 
-      const handleDelete = async () => {
-        await deleteImage(playlist.value.filePath);
-        await deleteDoc();
-        router.push({ name: 'Home' }); //redirect to home page
-      }
+    const handleDelete = async () => {
+      await deleteImage(playlist.value.filePath);
+      await deleteDoc();
+      router.push({ name: "Home" }); //redirect to home page
+    };
 
-      return { playlist, error, ownership, handleDelete }
-    }
-}
+    return { playlist, error, ownership, handleDelete };
+  },
+};
 </script>
 
 <style>
-.playlist-details{
+.playlist-details {
   display: grid;
   grid-template-columns: 1fr 2fr;
   gap: 80px;
@@ -66,7 +70,7 @@ export default {
   position: relative;
   padding: 160px;
 }
-.cover img{
+.cover img {
   display: block;
   position: absolute;
   top: 0;
@@ -76,7 +80,7 @@ export default {
   max-width: 200%;
   max-height: 200%;
 }
-.playlist-info{
+.playlist-info {
   text-align: center;
 }
 .playlist-info h2 {
@@ -93,6 +97,4 @@ export default {
 .description {
   text-align: left;
 }
-
-
 </style>
