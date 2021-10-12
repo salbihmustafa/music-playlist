@@ -14,8 +14,8 @@
     <!-- song list -->
     <div class="song-list">
       <div v-if="!playlist.songs.length">No songs have been added to this playlist yet.</div>
-      <SongList v-if="playlist.songs.length" :ownership="ownership" :playlist="playlist"/>
-      <AddSong v-if="ownership" :playlist="playlist" />
+      <SongList v-if="playlist.songs.length" :ownership="ownership" :playlist="playlist" :id="id"/>
+      <AddSong v-if="ownership" :playlist="playlist" :id="id"/>
     </div>
   </div>
 </template>
