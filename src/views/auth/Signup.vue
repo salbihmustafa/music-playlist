@@ -30,7 +30,7 @@ export default {
                 //no error
                 console.log('User signed up');
                 //Route to home page
-                router.push({ name: 'Home'} );
+                router.push({ name: 'UserPlaylists'} );
             }
         }
 

@@ -15,3 +15,8 @@ projectAuth.onAuthStateChanged(() => {
     }
     
 });
+
+//Workaround to live reload
+if(module.hot){
+    module.hot.accept();
+}

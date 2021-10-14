@@ -28,7 +28,7 @@ export default {
                 //no error
                 console.log('User logged in');
                 //Route to home page
-                router.push({ name: 'Home' });
+                router.push({ name: 'UserPlaylists' });
             }
         }
 
