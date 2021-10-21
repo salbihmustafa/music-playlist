@@ -1,12 +1,17 @@
 import { ref, watchEffect } from 'vue';
 import { projectFirestore } from '../firebase/config';
 
-const getCollection = (myCollection) => {
+const getCollection = (myCollection, query) => {
     const documents = ref(null); //for documents from database
     const error = ref(null);
 
     //register the firestore collection reference
     let collectionRef = projectFirestore.collection(myCollection).orderBy('createdAt')
+
+    if(query) {
+        //only if they pass in query
+        collectionRef = collectionRef.where(...query); //this will spread the array into three separate parts
+    }
 
     const unsubscribe = collectionRef.onSnapshot(snap => {
         console.log('snapshot');
